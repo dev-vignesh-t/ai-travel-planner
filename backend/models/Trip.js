@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const ActivitySchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String },
-  estimatedCostUSD: { type: Number, default: 0 },
+  estimatedCostINR: { type: Number, default: 0 },
   timeOfDay: { type: String, enum: ['Morning', 'Afternoon', 'Evening'] }
 });
 
@@ -20,7 +20,7 @@ const TripSchema = new mongoose.Schema({
   hotels: [{
     name: { type: String, required: true },
     tier: { type: String },
-    estimatedCostNightUSD: { type: Number },
+    estimatedCostNightINR: { type: Number },
     rating: { type: String }
   }],
   estimatedBudget: {

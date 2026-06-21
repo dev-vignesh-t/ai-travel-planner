@@ -15,12 +15,12 @@ const BudgetSummary = ({ budget }) => {
         {rows.map((row) => (
           <div key={row.label} className="flex justify-between text-slate-600">
             <span>{row.label}</span>
-            <span>${row.value}</span>
+            <span>₹{row.value}</span>
           </div>
         ))}
         <div className="flex justify-between font-bold text-slate-800 border-t pt-2 mt-2">
           <span>Total</span>
-          <span>${budget.total}</span>
+        <span>₹{budget.total}</span>
         </div>
       </div>
     </div>

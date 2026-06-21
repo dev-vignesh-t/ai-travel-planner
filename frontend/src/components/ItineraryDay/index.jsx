@@ -11,7 +11,7 @@ const ItineraryDay = ({ day, trip, onUpdate }) => {
 
     const updatedItinerary = trip.itinerary.map((d) =>
       d.dayNumber === day.dayNumber
-        ? { ...d, activities: [...d.activities, { title: newActivity, description: 'Added by traveler', estimatedCostUSD: 0, timeOfDay: 'Afternoon' }] }
+        ? { ...d, activities: [...d.activities, { title: newActivity, description: 'Added by traveler', estimatedCostINR: 0, timeOfDay: 'Afternoon' }] }
         : d
     );
 
@@ -54,7 +54,7 @@ const ItineraryDay = ({ day, trip, onUpdate }) => {
             <div>
               <p className="font-semibold text-slate-700">{act.title}</p>
               <p className="text-xs text-slate-500">{act.description}</p>
-              <span className="text-xs text-indigo-600">{act.timeOfDay} • ${act.estimatedCostUSD}</span>
+<span className="text-xs text-indigo-600">{act.timeOfDay} • ₹{act.estimatedCostINR}</span>
             </div>
             <button onClick={() => handleRemoveActivity(index)} className="text-red-500 text-xs font-medium ml-3">
               Remove

@@ -9,7 +9,7 @@ const HotelSuggestions = ({ hotels }) => {
           <div key={index} className="border border-slate-200 rounded-lg p-3">
             <p className="font-semibold text-slate-700 text-sm">{hotel.name}</p>
             <p className="text-xs text-slate-500">{hotel.tier}</p>
-            <p className="text-xs text-indigo-600 mt-1">${hotel.estimatedCostNightUSD}/night • {hotel.rating}</p>
+            <p className="text-xs text-indigo-600 mt-1">₹{hotel.estimatedCostNightINR}/night • {hotel.rating}</p>
           </div>
         ))}
       </div>

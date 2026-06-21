@@ -26,17 +26,20 @@ function buildGenerationPrompt({ destination, durationDays, budgetTier, interest
     Create a detailed travel plan for a ${durationDays}-day trip to ${destination}.
     Budget preference is ${budgetTier}. Interests are: ${interests.join(', ')}.
 
+    All costs must be in Indian Rupees (INR), since this app is built for Indian travelers.
+    Use realistic INR amounts (hundreds to thousands of rupees per activity, not dollar-scale numbers).
+
     Output ONLY a valid JSON object matching this exact structure:
     {
       "itinerary": [
         { "dayNumber": 1, "activities": [
-          { "title": "Activity name", "description": "Brief detail", "estimatedCostUSD": 20, "timeOfDay": "Morning" }
+          { "title": "Activity name", "description": "Brief detail", "estimatedCostINR": 500, "timeOfDay": "Morning" }
         ] }
       ],
       "hotels": [
-        { "name": "Hotel name", "tier": "Budget", "estimatedCostNightUSD": 85, "rating": "4.5/5" }
+        { "name": "Hotel name", "tier": "Budget", "estimatedCostNightINR": 2000, "rating": "4.5/5" }
       ],
-      "estimatedBudget": { "transport": 120, "accommodation": 300, "food": 150, "activities": 100, "total": 670 },
+      "estimatedBudget": { "transport": 5000, "accommodation": 9000, "food": 4000, "activities": 3000, "total": 21000 },
       "packingList": [
         { "item": "Passport", "category": "Documents", "isPacked": false }
       ]
@@ -45,9 +48,9 @@ function buildGenerationPrompt({ destination, durationDays, budgetTier, interest
     STRICT RULES — do not break these:
     - "timeOfDay" must be EXACTLY one of: "Morning", "Afternoon", "Evening". Never use "Late Morning", "Night", or anything else.
     - "category" in packingList must be EXACTLY one of: "Documents", "Clothing", "Gear", "Other". Never invent new categories.
+    - All monetary values must be in Indian Rupees (INR), matching realistic local rates for the given budgetTier.
 
-    Match estimates to realistic local rates for the given budgetTier. Base packingList
-    on the destination's typical climate and planned activities.
+    Base packingList on the destination's typical climate and planned activities.
   `;
 }
 
@@ -172,20 +175,21 @@ exports.regenerateDay = async (req, res) => {
     const trip = await Trip.findOne({ _id: req.params.id, userId: req.user.id });
     if (!trip) return res.status(404).json({ message: 'Trip not found' });
 
-    const prompt = `
-      The user is on a ${trip.durationDays}-day trip to ${trip.destination} with a
-      ${trip.budgetTier} budget, interests in ${trip.interests.join(', ')}.
-      Regenerate ONLY Day ${dayNumber} based on this feedback: "${feedback}".
+ const prompt = `
+  The user is on a ${trip.durationDays}-day trip to ${trip.destination} with a
+  ${trip.budgetTier} budget, interests in ${trip.interests.join(', ')}.
+  Regenerate ONLY Day ${dayNumber} based on this feedback: "${feedback}".
 
-      Output ONLY a valid JSON object matching this exact structure:
-      { "dayNumber": ${dayNumber}, "activities": [
-        { "title": "...", "description": "...", "estimatedCostUSD": 0, "timeOfDay": "Morning" }
-      ] }
+  Output ONLY a valid JSON object matching this exact structure:
+  { "dayNumber": ${dayNumber}, "activities": [
+    { "title": "...", "description": "...", "estimatedCostINR": 0, "timeOfDay": "Morning" }
+  ] }
 
-      STRICT RULE — do not break this:
-      - "timeOfDay" must be EXACTLY one of: "Morning", "Afternoon", "Evening". Never use
-        "Late Morning", "Night", or anything else.
-    `;
+  STRICT RULES — do not break these:
+  - "timeOfDay" must be EXACTLY one of: "Morning", "Afternoon", "Evening". Never use
+    "Late Morning", "Night", or anything else.
+  - All costs must be in Indian Rupees (INR).
+`;  
 
     const newDay = await callGemini(prompt);
 
